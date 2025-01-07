@@ -2,25 +2,29 @@ const Router = require("express");
 const router = Router();
 const {getTodo,getTodos,createTodo,updateTodo,updateStatus,deleteTodo} = require("../controllers/todoController");
 const { todoValidator,statusValidator,zodErrorHandle } = require("../utils/zodValidation");
+const {verifyToken} = require("../middlewares/authMiddleware")
 
 
-router.get("/",async(req,res)=>{
-    const response = await getTodos();
+router.get("/",verifyToken,async(req,res)=>{
+    const token = req.headers.authorization.split(" ")[1];
+    const response = await getTodos(token);
     if(!response.success){
         res.status(500).json({"error": response.error})
     }
     res.status(200).json(response.todos)
 })
 
-router.get("/:todoId",async(req,res)=>{
-    const response = await getTodo(req.params.todoId);
+router.get("/:todoId",verifyToken,async(req,res)=>{
+    const token = req.headers.authorization.split(" ")[1];
+    const response = await getTodo(req.params.todoId,token);
     if(!response.success){
         res.status(500).json({"error": response.error})
     }
     res.status(200).json(response.todo)
 })
 
-router.post("/",async(req,res)=>{
+router.post("/",verifyToken,async(req,res)=>{
+    const token = req.headers.authorization.split(" ")[1];
     const title = req.body.title;
     const category = req.body.category;
     const priority = req.body.priority;
@@ -31,14 +35,15 @@ router.post("/",async(req,res)=>{
     if(!isValidTodo.success){
         return res.status(400).json(zodErrorHandle(isValidTodo))
     }
-    const response = await createTodo({title,category,priority,dueDate,status});
+    const response = await createTodo({title,category,priority,dueDate,status},token);
     if(!response.success){
         return res.status(500).json(response.error);
     }
     res.status(201).json({"message":"todo created successfully!"});
 })
 
-router.put("/:todoId",async(req,res)=>{
+router.put("/:todoId",verifyToken,async(req,res)=>{
+    const token = req.headers.authorization.split(" ")[1];
     const todoId = req.params.todoId;
     const title = req.body.title;
     const category = req.body.category;
@@ -50,7 +55,7 @@ router.put("/:todoId",async(req,res)=>{
     if(!isValidTodo.success){
         return res.status(400).json(zodErrorHandle(isValidTodo))
     }
-    const response = await updateTodo(todoId,{title,category,priority,dueDate,status});
+    const response = await updateTodo(todoId,{title,category,priority,dueDate,status},token);
     if(!response.success){
         res.status(500).json({"error": response.error})
     }
@@ -58,24 +63,26 @@ router.put("/:todoId",async(req,res)=>{
 })
 
 
-router.put("/status/:todoId",async(req,res)=>{
+router.put("/status/:todoId",verifyToken,async(req,res)=>{
     const todoId = req.params.todoId;
     const status = req.body.status;
+    const token = req.headers.authorization.split(" ")[1];
     const isValidStatus = statusValidator(status);
-    console.log(isValidStatus)
+
     if(!isValidStatus.success){
         return res.status(400).json(zodErrorHandle(isValidStatus))
     }
-    const response = await updateStatus(todoId,status);
+    const response = await updateStatus(todoId,status,token);
     if(!response.success){
         res.status(500).json({"error": response.error})
     }
     res.status(200).json({"message":response.message});
 })
 
-router.delete("/:todoId",async(req,res)=>{
+router.delete("/:todoId",verifyToken,async(req,res)=>{
     const todoId = req.params.todoId;
-    const response = await deleteTodo(todoId);
+    const token = req.headers.authorization.split(" ")[1];
+    const response = await deleteTodo(todoId,token);
     if(!response.success){
         res.status(500).json({"error": response.error})
     }

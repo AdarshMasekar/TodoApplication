@@ -3,6 +3,7 @@ const router = Router();
 const userMiddleware = require("../middlewares/userMiddleware")
 const {createUser} = require("../controllers/userController")
 const {generateToken} = require("../utils/auth")
+const {verifyToken} = require("../middlewares/authMiddleware")
 
 router.post("/signup",userMiddleware,async(req,res)=>{
     const username = req.body.username;
@@ -18,7 +19,8 @@ router.post("/signup",userMiddleware,async(req,res)=>{
 router.post("/signin",userMiddleware,async(req,res)=>{
     const username = req.body.username;
     const email = req.body.email;
-    const token = generateToken(username,email);
+    const userId = req.userId;
+    const token = generateToken(userId,username,email);
 
     res.status(200).json({"message":token})
 
