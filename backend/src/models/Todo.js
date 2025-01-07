@@ -30,6 +30,11 @@ const todoSchema = new mongoose.Schema({
         enum:["pending","completed","expired"],
         default:"pending",
         required:true
+    },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
     }
 },{timestamps:true})
 
