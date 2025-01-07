@@ -32,6 +32,8 @@ const userMiddleware = async(req,res,next )=>{
                 "error":"user not found with this email!"
             })
         }
+        const hashedPassword = userExists.password;
+        req.userId = userExists._id;
         const isValidCredentials = compare(password,hashedPassword);
         if(!isValidCredentials){
             res.status(403).json({
@@ -42,5 +44,4 @@ const userMiddleware = async(req,res,next )=>{
     }
     next();
 }
-
 module.exports = userMiddleware
