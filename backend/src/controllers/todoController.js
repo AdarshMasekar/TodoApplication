@@ -1,8 +1,12 @@
 const Todo = require("../models/Todo");
+const jwt = require("jsonwebtoken");
+const {JWT_SECRET} = require("../config/dotenv");
 
-const createTodo = async({title,category,priority,dueDate,status})=>{
+const createTodo = async({title,category,priority,dueDate,status},token)=>{
     try{
-        await Todo.create({title,category,priority,dueDate,status});
+        const decodedToken = jwt.verify(token,JWT_SECRET);
+        const userId = decodedToken.userId;
+        await Todo.create({title,category,priority,dueDate,status,userId});
         return {
             "success":true,
             "message":"todo creation successfull!"
@@ -15,9 +19,11 @@ const createTodo = async({title,category,priority,dueDate,status})=>{
     }
 }
 
-const getTodos = async()=>{
+const getTodos = async(token)=>{
     try{
-        const todos = await Todo.find();
+        const decodedToken = jwt.verify(token,JWT_SECRET);
+        const userId = decodedToken.userId;
+        const todos = await Todo.find({userId:userId});
         return {
             "success":true,
             todos:todos
@@ -30,9 +36,11 @@ const getTodos = async()=>{
     }
 }
 
-const getTodo = async(id)=>{
+const getTodo = async(id,token)=>{
     try{
-        const todo = await Todo.findOne({_id:id});
+        const decodedToken = jwt.verify(token,JWT_SECRET);
+        const userId = decodedToken.userId;
+        const todo = await Todo.findOne({_id:id,userId:userId});
         return {
             "success":true,
             todo:todo
@@ -45,9 +53,11 @@ const getTodo = async(id)=>{
     }
 }
 
-const updateTodo = async(id,{title,category,priority,dueDate,status}) =>{
+const updateTodo = async(id,{title,category,priority,dueDate,status},token) =>{
     try{
-        await Todo.findByIdAndUpdate(id,
+        const decodedToken = jwt.verify(token,JWT_SECRET);
+        const userId = decodedToken.userId;
+        await Todo.findOneAndUpdate({_id:id,userId:userId},
             {$set:{
                     title:title,
                     category:category,
@@ -69,9 +79,11 @@ const updateTodo = async(id,{title,category,priority,dueDate,status}) =>{
     }
 }
 
-const updateStatus = async(id,status) =>{
+const updateStatus = async(id,status,token) =>{
     try{
-        await Todo.findByIdAndUpdate(id,{
+        const decodedToken = jwt.verify(token,JWT_SECRET);
+        const userId = decodedToken.userId;
+        await Todo.findOneAndUpdate({_id:id,userId:userId},{
             $set:{status:status}
         })
         return {
@@ -86,9 +98,12 @@ const updateStatus = async(id,status) =>{
         };
     }
 }
-const deleteTodo = async(id)=>{
+
+const deleteTodo = async(id,token)=>{
     try{
-        await Todo.findByIdAndDelete(id);
+        const decodedToken = jwt.verify(token,JWT_SECRET);
+        const userId = decodedToken.userId;
+        await Todo.findOneAndDelete({_id:id,userId:userId});
         return {
             "success":true,
             "message":"todo deleted successfully!"
