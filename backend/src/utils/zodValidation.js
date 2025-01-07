@@ -33,13 +33,12 @@ const userValidator = (username,email,password) => userSchema.safeParse({
 }
 )
 
-
 const signInSchema = zod.object({
     email:zod.string().email(),
     password:zod.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&]{8,}$/,"Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."),
 })
 
-const signInValidator = (email,password) => signInSchema.safeParse(email,password);
+const signInValidator = (email,password) => signInSchema.safeParse({email:email,password:password});
 
 const zodErrorHandle = (isValidZod) =>{
     return {"error":isValidZod.error.issues.map(issue=>issue.message).join(" and ")};
