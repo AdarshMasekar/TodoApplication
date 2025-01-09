@@ -2,24 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-light: #f3f4f6;
+  --text-light: #1f2937;
+  --bg-dark: #1f2937;
+  --text-dark: #f3f4f6;
+  --primary-color: #db2777;
+  --secondary-color: #6d28d9;
+}
+
 *{
     @apply m-0 p-0 font-sans
 }
 
 body{
-    @apply bg-gray-100 text-gray-800
+    @apply bg-[var(--bg-light)] text-[var(--text-light)]
 }
 
 /* Dark theme styling */
 .dark{
-    @apply bg-gray-800 text-gray-100
+    @apply bg-[var(--bg-dark)] text-[var(--text-dark)]
 }
 
 /* Light theme styling */
 .light{
-    @apply bg-gray-100 text-gray-800
+    @apply bg-[var(--bg-light)] text-[var(--text-light)]
 }
 
 .input{
-    @apply border border-gray-300 rounded-md p-2
+    @apply border border-gray-300 rounded-md p-2 bg-[var(--bg-light)] text-[var(--text-light)];
 }
