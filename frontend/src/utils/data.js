@@ -2,12 +2,12 @@ const navlinks = {
     loggedIn: [
         { path: '/', label: 'Dashboard' },
         { path: '/profile', label: 'Profile' },
-        { path: '/logout', label: 'Logout' }
+        { path: '/signup', label: 'logout' }
     ],
     notLoggedIn: [
         { path: '/', label: 'Home' },
         { path: '/signup', label: 'Sign Up' },
-        { path: '/login', label: 'Login' }
+        { path: '/signin', label: 'Sin In' }
     ]
 }
 export { navlinks }
