@@ -1,13 +1,27 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 function Todos(){
     const [todos,setTodos] = useState([]);
+    const {token} = useAuth();
 
     useEffect(()=>{
-        const response = axios.get("",
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdjZmM5MjFlYTRiNTQ3YWQ0NzczZjIiLCJ1c2VybmFtZSI6ImFkYXJhaG1hc2VrYXIxMiIsImVtYWlsIjoiYWRhcmFobWFzZWthcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczNjI0Njg5MCwiZXhwIjoxNzM2MzMzMjkwfQ.hHkNSzIwY9jLTEIUS75yBz170PVI9imt2KD0v7gY1nc'
-        )
+        const fetchTodos = async()=>{
+            try{
+                const response = await axios.get("http://localhost:3000/api/todos",
+                {
+                    headers:{
+                        'Authorization': 'Bearer '+token
+                    }
+                }
+                )
+                setTodos(response.data);
+            }catch(error){
+                console.log(error)
+            }
+        }
+        fetchTodos();
     },[])
 
     return <div className="todos">
