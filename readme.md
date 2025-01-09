@@ -29,7 +29,7 @@ This document provides a comprehensive overview of the full-stack todo applicati
 
 ## Architecture
 
-The application follows a typical full-stack architecture with a Node.js backend and a potential frontend (not included in the provided code).
+The application follows a typical full-stack architecture with a Node.js backend and a React frontend.
 
 ### Backend
 
@@ -60,6 +60,35 @@ The backend is built using Node.js with Express.js. It handles API requests, dat
     -   **`auth.js`**: Handles password hashing, comparison, and JWT token generation.
     -   **`cron-job.js`**: Implements a cron job to update expired todos.
     -   **`zodValidation.js`**: Implements input validation using Zod.
+
+### Frontend
+
+The frontend is built using React and Vite. It provides the user interface for interacting with the backend API.
+
+-   **`index.html`**: Main HTML file for the application.
+-   **`src/main.jsx`**: Entry point for the React application.
+    -   Sets up the React application with necessary context providers.
+-   **`src/App.jsx`**: Main component that sets up routing.
+    -   Defines routes for different pages like sign-up, sign-in, dashboard, and todo management.
+-   **`src/pages/`**: Contains page components.
+    -   **`Home.jsx`**: Landing page for the application.
+    -   **`SignUp.jsx`**: User registration page.
+    -   **`SignIn.jsx`**: User login page.
+    -   **`Dashboard.jsx`**: Displays the list of todos.
+    -   **`AddTodo.jsx`**: Page to create a new todo.
+    -   **`EditTodo.jsx`**: Page to edit an existing todo.
+    -   **`Profile.jsx`**: User profile page.
+-   **`src/components/`**: Contains reusable components.
+    -   **`common/`**: Contains common UI components like `Heading`, `SubHeading`, `Input`, `Button`, and `Card`.
+    -   **`layout/`**: Contains layout components like `Navbar` and `Footer`.
+-   **`src/context/`**: Contains context providers.
+    -   **`AuthContext.jsx`**: Manages user authentication state.
+    -   **`ThemeContext.jsx`**: Manages the application's theme (light/dark).
+-   **`src/utils/`**: Contains utility functions.
+    -   **`data.js`**: Contains navigation links.
+-   **`src/index.css`**: Global styles for the application.
+-   **`tailwind.config.js`**: Configuration file for Tailwind CSS.
+-   **`postcss.config.js`**: Configuration file for PostCSS.
 
 ## Models
 
@@ -161,6 +190,16 @@ The `Todo` model represents a todo item and has the following properties:
     ```bash
     npm install
     ```
+    - Navigate to the `frontend` directory and run `npm install` to install frontend dependencies.
+    ```bash
+    cd frontend
+    npm install
+    ```
+    - Navigate to the `backend` directory and run `npm install` to install backend dependencies.
+    ```bash
+    cd backend
+    npm install
+    ```
 3.  **Set up environment variables:**
     -   Create a `.env` file in the `backend` directory.
     -   Add the following environment variables:
@@ -176,6 +215,12 @@ The `Todo` model represents a todo item and has the following properties:
     node backend/server.js
     ```
     The server will start on the specified port.
+5.  **Start the frontend:**
+    ```bash
+    cd frontend
+    npm run dev
+    ```
+    The frontend will start on the specified port (usually `http://localhost:5173`).
 
 ## API Endpoints
 
