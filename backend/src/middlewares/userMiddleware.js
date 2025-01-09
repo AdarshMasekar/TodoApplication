@@ -1,47 +1,65 @@
-const {zodErrorHandle,userValidator} = require("../utils/zodValidation")
-const {hash,compare} = require("../utils/auth")
+const {zodErrorHandle,userValidator,signInValidator} = require("../utils/zodValidation")
 const User = require("../models/User")
+const {compare} = require("../utils/auth")
 
-const userMiddleware = async(req,res,next )=>{
-    const username = req.body.username;
-    const email = req.body.email;
-    const password = req.body.password;
+const signUp = async(req,res,next )=>{
+    const {username, email, password} = req.body;
 
     const isValidUser = userValidator(username,email,password);
     if(!isValidUser.success){
-        return res.send(411).json(zodErrorHandle(isValidUser));
+        return res.status(411).json(zodErrorHandle(isValidUser));
     }
-    const hashedPassword = await hash(password);
-    req.hashedPassword = hashedPassword;
+    const emailExists = await User.findOne({
+        email:email
+    })
 
+    const usernameExists = await User.findOne({
+        username:username
+    })
+
+    if(usernameExists){
+        return res.status(400).json({
+            "success":false,
+            "error":"user already exists with this username!"
+        })
+    }
+
+    if(emailExists){
+        return res.status(400).json({
+            "success":false,
+            "error":"user already exists with this email!"
+        })
+    }
+    return next();
+}
+
+const signIn = async(req,res,next )=>{
+    const {email, password} = req.body;
+
+    const isValidUser = signInValidator(email,password);
+    if(!isValidUser.success){
+        return res.status(411).json(zodErrorHandle(isValidUser));
+    }
     const userExists = await User.findOne({
         email:email
     })
 
-    if(req.originalUrl === '/api/user/signup'){
-        if(userExists){
-            return res.status(400).json({
-                "error":"user already exists with this email!"
-            })
-        }
-        next();
+    if(!userExists){
+        return res.status(400).json({
+            "success":false,
+            "error":"user not found with this email!"
+        })
     }
-    else if(req.originalUrl === '/api/user/signin'){
-        if(!userExists){
-            return res.status(400).json({
-                "error":"user not found with this email!"
-            })
-        }
-        const hashedPassword = userExists.password;
-        req.userId = userExists._id;
-        const isValidCredentials = compare(password,hashedPassword);
-        if(!isValidCredentials){
-            res.status(403).json({
-                "error":"user credentials are incorrect!"
-            })
-        }
-        next();
+    const isPasswordCorrect = await compare(password,userExists.password);
+    if(!isPasswordCorrect){
+        return res.status(401).json({
+            "success":false,
+            "error":"incorrect password!"
+        })
     }
-    next();
+    req.username = userExists.username;
+    req.userId = userExists._id;
+    return next();
 }
-module.exports = userMiddleware
+
+module.exports = {signUp,signIn}

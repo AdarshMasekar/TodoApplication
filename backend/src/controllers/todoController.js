@@ -6,10 +6,11 @@ const createTodo = async({title,category,priority,dueDate,status},token)=>{
     try{
         const decodedToken = jwt.verify(token,JWT_SECRET);
         const userId = decodedToken.userId;
-        await Todo.create({title,category,priority,dueDate,status,userId});
+        const newTodo = await Todo.create({title,category,priority,dueDate,status,userId});
         return {
             "success":true,
-            "message":"todo creation successfull!"
+            "message":"todo creation successfull!",
+            "todoId":newTodo._id
         };
     }catch(error){
         return {
@@ -18,7 +19,6 @@ const createTodo = async({title,category,priority,dueDate,status},token)=>{
         };
     }
 }
-
 const getTodos = async(token)=>{
     try{
         const decodedToken = jwt.verify(token,JWT_SECRET);

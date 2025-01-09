@@ -30,16 +30,16 @@ router.post("/",verifyToken,async(req,res)=>{
     const priority = req.body.priority;
     const dueDate = req.body.dueDate;
     const status = req.body.status;
-
     const isValidTodo = todoValidator(title,category,priority,dueDate,status);
     if(!isValidTodo.success){
         return res.status(400).json(zodErrorHandle(isValidTodo))
     }
     const response = await createTodo({title,category,priority,dueDate,status},token);
+    console.log(response)
     if(!response.success){
         return res.status(500).json(response.error);
     }
-    res.status(201).json({"message":"todo created successfully!"});
+    res.status(201).json({"success":true,"message":"todo created successfully!"});
 })
 
 router.put("/:todoId",verifyToken,async(req,res)=>{
@@ -63,7 +63,7 @@ router.put("/:todoId",verifyToken,async(req,res)=>{
 })
 
 
-router.put("/status/:todoId",verifyToken,async(req,res)=>{
+router.patch("/status/:todoId",verifyToken,async(req,res)=>{
     const todoId = req.params.todoId;
     const status = req.body.status;
     const token = req.headers.authorization.split(" ")[1];

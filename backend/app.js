@@ -1,10 +1,13 @@
 const express = require("express");
 const todoRouter = require("./src/routes/todoRoutes")
 const userRouter = require("./src/routes/userRoutes")
-// const cors = require("cors");
+const cors = require("cors");
 
 const app = express();
-// app.use(cors());
+app.use(cors({
+    origin:'http://localhost:5173',
+    credentials:true
+}));
 app.use(express.json());
 app.use("/api/todos",todoRouter);
 app.use("/api/user",userRouter);

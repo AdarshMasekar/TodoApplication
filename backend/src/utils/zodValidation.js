@@ -41,7 +41,7 @@ const signInSchema = zod.object({
 const signInValidator = (email,password) => signInSchema.safeParse({email:email,password:password});
 
 const zodErrorHandle = (isValidZod) =>{
-    return {"error":isValidZod.error.issues.map(issue=>issue.message).join(" and ")};
+    return {"success":false,"error":isValidZod.error.issues.map(issue=>issue.message).join(" and ")};
 }
 
 module.exports ={
